@@ -1,0 +1,64 @@
+{
+  "results": {
+    "Full model - leave-years-out CV (2001-2018)": {
+      "pr_auc": 0.0036714443398230124,
+      "roc_auc": 0.8357801863936118,
+      "brier": 0.000843577805777852,
+      "base_rate": 0.0008458131677472377,
+      "pr_auc_lift": 4.340727337695202,
+      "capture_top5": 0.11336032388663968,
+      "capture_top10": 0.2213225371120108
+    },
+    "Full model - temporal holdout (2019+)": {
+      "pr_auc": 0.002005504618167181,
+      "roc_auc": 0.8420723293274434,
+      "brier": 0.00043392104117416974,
+      "base_rate": 0.0004335939796578282,
+      "pr_auc_lift": 4.625305498360079,
+      "capture_top5": 0.18983050847457628,
+      "capture_top10": 0.33559322033898303
+    },
+    "Weather-only model - temporal holdout": {
+      "pr_auc": 0.0011447366503708983,
+      "roc_auc": 0.7533741428255798,
+      "brier": 0.00043358172227446533,
+      "base_rate": 0.0004335939796578282,
+      "pr_auc_lift": 2.640111957445235,
+      "capture_top5": 0.0576271186440678,
+      "capture_top10": 0.1288135593220339
+    },
+    "Climatology baseline - temporal holdout": {
+      "pr_auc": 0.0009932370866621175,
+      "roc_auc": 0.7110677456429576,
+      "brier": 0.0004381519962747161,
+      "base_rate": 0.0004335939796578282,
+      "pr_auc_lift": 2.2907077433269096,
+      "capture_top5": 0.29152542372881357,
+      "capture_top10": 0.29152542372881357
+    }
+  },
+  "top_drivers": {
+    "ndvi": 0.2765,
+    "woy_cos": 0.2724,
+    "pr_90d": 0.2698,
+    "ignitions_10km_20y": 0.2435,
+    "vpd_max": 0.2253,
+    "pr_30d": 0.2114,
+    "frac_grass": 0.2089,
+    "wind_mean": 0.2011,
+    "tmax_mean": 0.1908,
+    "frac_bare": 0.1854,
+    "pr_week": 0.1838,
+    "tmax_max": 0.1685,
+    "vpd_mean": 0.1671,
+    "slope_mean": 0.1507,
+    "woy_sin": 0.1134
+  },
+  "backtest_median_percentile": {
+    "VALLEY": 0.912285407725322,
+    "BORDER 2": 0.7255901287553648
+  },
+  "uncertainty_vs_risk_corr": 0.8450560102148529,
+  "n_train": 1752160,
+  "n_test": 680360
+}

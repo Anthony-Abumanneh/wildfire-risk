@@ -1,0 +1,14 @@
+body { margin: 0; background: #faf8f5; color: #222; font-family: Inter, -apple-system, system-ui, sans-serif; }
+.page { max-width: 1280px; margin: 0 auto; padding: 16px; }
+h1 { margin: 8px 0 2px; font-size: 26px; }
+.sub { color: #666; margin: 0 0 14px; font-size: 14px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.kpi { background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 12px 14px; }
+.kpi-v { font-size: 24px; font-weight: 700; color: #c2410c; }
+.kpi-l { font-size: 13px; color: #666; }
+.radio { margin: 10px 0; font-size: 14px; } .radio label { margin-right: 14px; }
+.row { display: flex; gap: 14px; flex-wrap: wrap; }
+.map { flex: 3 1 560px; min-width: 0; }
+.detail { flex: 1 1 260px; background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 14px; font-size: 14px; }
+.figs { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+.fig { max-width: 100%; width: 400px; border: 1px solid #eee; border-radius: 8px; background: #fff; }
