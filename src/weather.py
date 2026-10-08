@@ -10,11 +10,17 @@ import pandas as pd
 import xarray as xr
 from numpy.lib.stride_tricks import sliding_window_view
 
-from config import BBOX, PROC
+from config import BBOX, PROC, TEST_START
 
 GRIDMET = "http://thredds.northwestknowledge.net:8080/thredds/dodsC/agg_met_{}_1979_CurrentYear_CONUS.nc"
-VARS = {"tmmx": "tmax", "rmin": "rhmin", "vs": "wind", "vpd": "vpd", "pr": "pr"}
+VARS = {"tmmx": "tmax", "rmin": "rhmin", "vs": "wind", "vpd": "vpd", "pr": "pr",
+        "th": "wdir",                      # wind-from direction, degrees
+        "fm100": "fm100", "fm1000": "fm1000",  # dead fuel moisture, %
+        "erc": "erc", "bi": "bi"}          # NFDRS energy release component, burning index
+FUELS = ["fm100", "fm1000", "erc", "bi"]   # not forecast -> use last observed value before the window
 RAIN_MM = 2.5
+OFFSHORE = (10, 110)  # NE-E winds: Santa Ana direction
+SA_WIND, SA_RH = 3.0, 25.0
 
 
 def download_gridmet(start: str, end: str | None = None) -> pd.DataFrame:
@@ -59,14 +65,31 @@ def to_arrays(daily: pd.DataFrame, px: pd.DataFrame) -> tuple[pd.DatetimeIndex, 
     return dates, arrs
 
 
-def weekly_features(dates: pd.DatetimeIndex, arrs: dict, anchors) -> pd.DataFrame:
-    """Fire-weather features for the 7 days starting at each anchor date, plus
-    antecedent precipitation from the days *before* the anchor (no leakage)."""
+def erc_reference(dates: pd.DatetimeIndex, arrs: dict, end: str) -> np.ndarray:
+    """Sorted daily ERC per pixel over the reference period (for percentiles)."""
+    return np.sort(arrs["erc"][dates < end], axis=0)
+
+
+def percentile_of(ref: np.ndarray, x: np.ndarray) -> np.ndarray:
+    """Per-pixel percentile of x (A, P) within ref (N, P)."""
+    out = np.empty_like(x, dtype=float)
+    for p in range(ref.shape[1]):
+        col = ref[:, p][~np.isnan(ref[:, p])]
+        out[:, p] = np.searchsorted(col, x[:, p]) / max(len(col), 1)
+    return out
+
+
+def weekly_features(dates: pd.DatetimeIndex, arrs: dict, anchors, erc_ref: np.ndarray,
+                    window: int = 7) -> pd.DataFrame:
+    """Fire-weather features for the `window` days starting at each anchor date, plus
+    antecedent precipitation and fuel/danger indices from the days *before* the anchor
+    (observed at forecast time, so no leakage)."""
     pos = dates.get_indexer(pd.DatetimeIndex(anchors))
-    keep = (pos >= 365) & (pos + 7 <= len(dates))
+    keep = (pos >= 365) & (pos + window <= len(dates))
     anchors, pos = pd.DatetimeIndex(anchors)[keep], pos[keep]
 
-    win = {v: sliding_window_view(a, 7, axis=0)[pos] for v, a in arrs.items()}  # (A, P, 7)
+    win = {v: sliding_window_view(arrs[v], window, axis=0)[pos]
+           for v in ["tmax", "rhmin", "wind", "vpd", "pr", "wdir"]}  # (A, P, window)
     feats = {
         "tmax_max": win["tmax"].max(-1), "tmax_mean": win["tmax"].mean(-1),
         "rhmin_min": win["rhmin"].min(-1), "rhmin_mean": win["rhmin"].mean(-1),
@@ -77,6 +100,19 @@ def weekly_features(dates: pd.DatetimeIndex, arrs: dict, anchors) -> pd.DataFram
     cum = np.vstack([np.zeros((1, arrs["pr"].shape[1])), np.nancumsum(arrs["pr"], 0)])
     for n in (30, 90, 365):
         feats[f"pr_{n}d"] = cum[pos] - cum[pos - n]
+
+    offshore = (win["wdir"] >= OFFSHORE[0]) & (win["wdir"] <= OFFSHORE[1])
+    feats["offshore_days"] = offshore.sum(-1)
+    feats["santa_ana_days"] = (offshore & (win["wind"] >= SA_WIND) & (win["rhmin"] <= SA_RH)).sum(-1)
+    feats["santa_ana_wind_max"] = np.where(offshore, win["wind"], 0).max(-1)
+
+    # fuels: last observed value before the window (forward-filled across gridMET lag)
+    for v in FUELS:
+        filled = pd.DataFrame(arrs[v]).ffill().to_numpy()
+        feats[f"{v}_prev"] = filled[pos - 1]
+    erc_filled = pd.DataFrame(arrs["erc"]).ffill().to_numpy()
+    feats["erc_7d_prev"] = np.nanmean(sliding_window_view(erc_filled, 7, axis=0)[pos - 7], -1)
+    feats["erc_pct_prev"] = percentile_of(erc_ref, feats["erc_prev"])
 
     rain_idx = np.where(arrs["pr"] >= RAIN_MM, np.arange(len(dates))[:, None], np.nan)
     last_rain = pd.DataFrame(rain_idx).ffill().to_numpy()
@@ -98,7 +134,9 @@ if __name__ == "__main__":
     map_cells_to_pixels(cells, px).to_parquet(PROC / "cell_pixel.parquet")
 
     dates, arrs = to_arrays(daily, px)
+    erc_ref = erc_reference(dates, arrs, TEST_START)  # training years only
+    np.save(PROC / "erc_reference.npy", erc_ref)
     mondays = pd.date_range("2001-01-01", dates[-1], freq="W-MON")
-    wk = weekly_features(dates, arrs, mondays)
+    wk = weekly_features(dates, arrs, mondays, erc_ref)
     wk.to_parquet(PROC / "weather_weekly.parquet")
     print(f"{len(px)} pixels, {wk.week.nunique()} weeks ({wk.week.min():%Y-%m-%d} to {wk.week.max():%Y-%m-%d})")
