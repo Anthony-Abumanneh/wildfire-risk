@@ -131,8 +131,7 @@ def run():
     OUT.mkdir(parents=True, exist_ok=True)
     HISTORY_DIR.mkdir(exist_ok=True)
     cells = gpd.read_parquet(PROC / "cells.parquet")
-    px = pd.read_parquet(PROC / "gridmet_pixels.parquet")
-    px = px[px.pixel.isin(pd.read_parquet(PROC / "cell_pixel.parquet").pixel)]
+    px = pd.read_parquet(PROC / "gridmet_pixels.parquet")  # all pixels: arrays must align with erc_ref
     erc_ref = load_erc_reference()
 
     fires = download_perimeters()

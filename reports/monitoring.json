@@ -1,0 +1,9 @@
+{
+  "scored_forecasts": 0,
+  "reporting_lag_days": 14,
+  "drift": {
+    "training_weekly_ignition_rate": 0.0034133326755792347,
+    "last_365d_rate": 0.003105397821063057,
+    "ratio": 0.909784693206348
+  }
+}

@@ -125,8 +125,10 @@ def capture(df: pd.DataFrame, target: str, score: np.ndarray, budgets=BUDGETS) -
 
 
 def metrics(df: pd.DataFrame, target: str, score: np.ndarray, prob=None) -> dict:
+    """Ranking metrics on `score`; Brier only when calibrated probabilities `prob` are given
+    (benchmark scores are not probabilities)."""
     y = df[target].to_numpy()
-    prob = score if prob is None else prob
     ap = average_precision_score(y, score)
     return {"pr_auc": ap, "pr_auc_lift": ap / y.mean(), "roc_auc": roc_auc_score(y, score),
-            "brier": brier_score_loss(y, prob), "base_rate": y.mean(), **capture(df, target, score)}
+            "brier": brier_score_loss(y, np.clip(prob, 0, 1)) if prob is not None else np.nan,
+            "base_rate": y.mean(), **capture(df, target, score)}
