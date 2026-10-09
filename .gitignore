@@ -6,3 +6,4 @@ data/processed/gridmet_daily.parquet
 data/processed/weather_weekly.parquet
 data/processed/panel.parquet
 cache/
+data/processed/erc_reference.npy

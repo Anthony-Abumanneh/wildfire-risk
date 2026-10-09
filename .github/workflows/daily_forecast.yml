@@ -18,11 +18,12 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
+      - run: pytest -q
       - run: python src/forecast.py
       - name: Commit forecast
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/forecast data/processed/ndvi.parquet
+          git add data/forecast reports/monitoring.json data/processed/ndvi.parquet data/processed/ignitions.parquet
           git diff --cached --quiet || git commit -m "Daily forecast $(date -u +%F)"
           git push

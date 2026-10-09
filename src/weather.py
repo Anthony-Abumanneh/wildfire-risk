@@ -70,6 +70,11 @@ def erc_reference(dates: pd.DatetimeIndex, arrs: dict, end: str) -> np.ndarray:
     return np.sort(arrs["erc"][dates < end], axis=0)
 
 
+def load_erc_reference() -> np.ndarray:
+    """ERC values are integers, so the float32 compressed copy is lossless (and small enough to commit)."""
+    return np.load(PROC / "erc_reference.npz")["ref"].astype(float)
+
+
 def percentile_of(ref: np.ndarray, x: np.ndarray) -> np.ndarray:
     """Per-pixel percentile of x (A, P) within ref (N, P)."""
     out = np.empty_like(x, dtype=float)
@@ -135,7 +140,7 @@ if __name__ == "__main__":
 
     dates, arrs = to_arrays(daily, px)
     erc_ref = erc_reference(dates, arrs, TEST_START)  # training years only
-    np.save(PROC / "erc_reference.npy", erc_ref)
+    np.savez_compressed(PROC / "erc_reference.npz", ref=erc_ref.astype(np.float32))
     mondays = pd.date_range("2001-01-01", dates[-1], freq="W-MON")
     wk = weekly_features(dates, arrs, mondays, erc_ref)
     wk.to_parquet(PROC / "weather_weekly.parquet")

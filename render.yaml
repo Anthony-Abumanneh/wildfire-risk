@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: sd-wildfire-risk
+    runtime: docker
+    plan: free
+    autoDeploy: true  # redeploys when the daily forecast commit lands on main
