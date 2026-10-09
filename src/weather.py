@@ -1,5 +1,6 @@
 """gridMET daily weather -> weekly fire-weather features per gridMET pixel."""
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -23,17 +24,32 @@ OFFSHORE = (10, 110)  # NE-E winds: Santa Ana direction
 SA_WIND, SA_RH = 3.0, 25.0
 
 
+def _fetch(code, start, end, lon0, lat0, lon1, lat1):
+    ds = xr.open_dataset(GRIDMET.format(code))
+    da = ds[list(ds.data_vars)[0]].sel(lat=slice(lat1 + 0.05, lat0 - 0.05),
+                                       lon=slice(lon0 - 0.05, lon1 + 0.05), day=slice(start, end))
+    years = pd.DatetimeIndex(da.day.values).year.unique()
+    return xr.concat([da.sel(day=str(y)).load() for y in years], dim="day")
+
+
+def _with_retries(fn, tries: int = 5, wait: int = 60):
+    """The THREDDS server drops connections now and then; back off and retry."""
+    for i in range(tries):
+        try:
+            return fn()
+        except OSError as e:
+            if i == tries - 1:
+                raise
+            print(f"  gridMET request failed ({e}); retrying in {wait * (i + 1)} s", flush=True)
+            time.sleep(wait * (i + 1))
+
+
 def download_gridmet(start: str, end: str | None = None) -> pd.DataFrame:
     """Daily gridMET for the county bbox -> wide frame indexed by (date, lat, lon)."""
     lon0, lat0, lon1, lat1 = BBOX
     out = {}
     for code, name in VARS.items():
-        ds = xr.open_dataset(GRIDMET.format(code))
-        da = ds[list(ds.data_vars)[0]].sel(lat=slice(lat1 + 0.05, lat0 - 0.05),
-                                           lon=slice(lon0 - 0.05, lon1 + 0.05),
-                                           day=slice(start, end))
-        years = pd.DatetimeIndex(da.day.values).year.unique()
-        da = xr.concat([da.sel(day=str(y)).load() for y in years], dim="day")
+        da = _with_retries(lambda: _fetch(code, start, end, lon0, lat0, lon1, lat1))
         out[name] = da.to_series()
         print(f"  {name}: {da.sizes['day']} days")
     df = pd.DataFrame(out).rename_axis(["date", "lat", "lon"])
