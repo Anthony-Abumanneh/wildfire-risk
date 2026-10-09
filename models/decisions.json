@@ -1,0 +1,6 @@
+{
+  "_note": "Frozen 2026-10-08 from leave-years-out CV on 2001-2018 (reports/experiments.csv), before scoring the 2019+ holdout.",
+  "ign":   {"features": "all 59", "params": "Optuna (models/params_ign.json)",   "stack": false, "calib_years": 5, "daily": false},
+  "large": {"features": "all 59", "params": "Optuna (models/params_large.json)", "stack": false, "calib_years": 5, "daily": false},
+  "fire":  {"features": "54 (no ignition history)", "params": "Optuna (models/params_fire.json)", "stack": false, "calib_years": 5, "daily": false}
+}

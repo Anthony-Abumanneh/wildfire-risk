@@ -35,7 +35,7 @@ def download_year(year: int) -> gpd.GeoDataFrame:
     for f in tmp.iterdir():
         f.unlink()
     tmp.rmdir()
-    g = g[g.GTYPE == "C"]  # zone-based warnings
+    g = g[(g.GTYPE == "C") & (g.PHENOM == "FW") & (g.SIG == "W")]  # zone-based Red Flag Warnings only (the API returns every type)
     g["start"] = pd.to_datetime(g.ISSUED, format="%Y%m%d%H%M").dt.tz_localize("UTC") \
         .dt.tz_convert("America/Los_Angeles").dt.tz_localize(None)
     g["end"] = pd.to_datetime(g.EXPIRED, format="%Y%m%d%H%M").dt.tz_localize("UTC") \

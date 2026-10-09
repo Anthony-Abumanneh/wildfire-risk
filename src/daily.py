@@ -103,8 +103,9 @@ def run(targets):
               **metrics(weekly, target, weekly_oof)},
              {"experiment": "daily model aggregated to week", "target": target,
               **metrics(weekly, target, daily_oof)},
-             {"experiment": "mean of weekly + daily", "target": target,
-              **metrics(weekly, target, 0.5 * (weekly_oof / weekly_oof.mean() + daily_oof / daily_oof.mean()))}])
+             {"experiment": "rank-average of weekly + daily", "target": target,
+              **metrics(weekly, target, 0.5 * (pd.Series(weekly_oof).rank(pct=True).to_numpy()
+                                              + pd.Series(daily_oof).rank(pct=True).to_numpy()), weekly_oof)}])
         print(pd.read_csv(PROC.parent.parent / "reports" / "experiments.csv").tail(3)
               [["experiment", "target", "pr_auc_lift", "roc_auc", "recall@5%", "recall@10%"]].to_string(), flush=True)
 
