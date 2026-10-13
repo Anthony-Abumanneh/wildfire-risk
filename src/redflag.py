@@ -1,5 +1,5 @@
 """NWS Red Flag Warnings (San Diego office, SGX) from the Iowa Environmental Mesonet archive,
-mapped to (cell, week) for benchmarking. A cell-week is flagged if any zone-based warning
+mapped to (cell, week) as context for the burn forecast (they target fire spread, not ignitions). A cell-week is flagged if any zone-based warning
 covering the cell center was in effect at any time that week."""
 import io
 import sys

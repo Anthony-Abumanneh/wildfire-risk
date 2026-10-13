@@ -131,14 +131,14 @@ def results_table(target):
 
 def perf_section(target):
     m = metrics["targets"][target]
-    rf = m.get("red_flag")
+    rf = m.get("red_flag") if target == "fire" else None  # warnings target fire spread, not ignitions
     parts = [html.H3(TARGET_NAMES[target]),
              dash_table.DataTable(results_table(target).to_dict("records"), style_cell={"fontFamily": "inherit"})]
     if rf:
         parts.append(html.P(
-            f"Red Flag Warnings flagged {rf['share_flagged']:.1%} of cell-weeks and caught "
-            f"{rf['rfw_recall']:.0%} of events; the model flagging the same number caught "
-            f"{rf['model_recall_same_volume']:.0%}."))
+            f"Context: NWS Red Flag Warnings (zone-wide, short-lead fire-weather alerts, not a like-for-like "
+            f"benchmark) covered {rf['share_flagged']:.1%} of cell-weeks and caught {rf['rfw_recall']:.0%} of "
+            f"burned cells; the model flagging the same number caught {rf['model_recall_same_volume']:.0%}."))
     figs = [f"recall_{target}.png", f"shap_{target}.png", f"calibration_{target}.png"]
     if target == "fire":
         figs.append("backtest_valley.png")

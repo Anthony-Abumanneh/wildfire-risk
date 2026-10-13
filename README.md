@@ -20,7 +20,7 @@ Scored **once** on a 2019–2025 holdout. Every modeling choice was frozen befor
 *PR-AUC lift = PR-AUC ÷ base rate. Recall@k = share of events that fell in that week's top k% riskiest cells.*
 *\*With only 23 large fires, PR-AUC is unstable (a few top-ranked hits dominate it); ROC-AUC and recall are the reliable numbers.*
 
-- **vs. NWS Red Flag Warnings:** warnings covered 3.0% of cell-weeks and caught **6%** of ignitions and **21%** of burned cells. The model, flagging the same number of cell-weeks, caught **27%** and **24%**. The warnings are issued hours to days ahead, so this comparison favours them.
+- **Context: NWS Red Flag Warnings.** These aren't a fair benchmark. They warn that weather would let fires *spread* fast, over whole forecast zones, hours to days ahead; they don't predict where fires *start*. For burned cells, the closest match to their purpose, the warnings covered 3.0% of cell-weeks and caught 21% of burned cells; the model flagging the same number caught 24%. The real baselines are fire history and ERC (table above).
 - **Calibration:** predicted/observed event counts are 0.92 for ignitions and burns, down from about 2× in v1, after calibrating on the most recent 5 years. Large-fire probabilities still run about 2× high.
 - **vs. v1** (burn target, same holdout): lift went from 4.6× to 7.0×, ROC-AUC from 0.842 to 0.865, and recall@5% from 19% to 26%. v1 lost to fire history at the top 5%; this version beats it.
 - **Evacuation:** 6 communities have ≤3 edge-disjoint escape routes. Borrego Springs (pop. 3,073) has 2 routes and a 65-minute median drive to a highway.
@@ -119,7 +119,7 @@ python src/static.py      # terrain + land cover
 python src/ndvi.py        # MODIS NDVI
 python src/exposure.py    # population, communities, escape routes
 python src/human.py       # roads, power lines, WUI, border/coast
-python src/redflag.py     # NWS Red Flag Warnings (benchmark)
+python src/redflag.py     # NWS Red Flag Warnings (context, not a benchmark)
 python src/features.py    # cell-week panel, 59 features, 3 targets
 python src/experiments.py ablation            # model selection (CV 2001-2018)
 python src/experiments.py tune ign 20         # likewise for fire, large
