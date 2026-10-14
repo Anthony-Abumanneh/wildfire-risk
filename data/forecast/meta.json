@@ -1,14 +1,14 @@
 {
-  "issued": "2026-10-12T21:58",
-  "valid_from": "2026-10-12",
-  "valid_to": "2026-10-18",
-  "observed_weather_through": "2026-10-10",
+  "issued": "2026-10-14T18:17",
+  "valid_from": "2026-10-14",
+  "valid_to": "2026-10-20",
+  "observed_weather_through": "2026-10-12",
   "model_versions": {
     "ign": "20261008",
     "large": "20261008",
     "fire": "20261008"
   },
   "warnings": [
-    "latest NDVI composite is 76 days old"
+    "latest NDVI composite is 78 days old"
   ]
 }
