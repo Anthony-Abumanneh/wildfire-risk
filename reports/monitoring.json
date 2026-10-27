@@ -3,7 +3,7 @@
   "reporting_lag_days": 14,
   "drift": {
     "training_weekly_ignition_rate": 0.0034133326755792347,
-    "last_365d_rate": 0.003064130075932651,
-    "ratio": 0.8976945311703833
+    "last_365d_rate": 0.0030538131396500496,
+    "ratio": 0.8946719906613921
   }
 }
