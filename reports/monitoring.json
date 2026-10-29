@@ -1,9 +1,22 @@
 {
-  "scored_forecasts": 0,
+  "scored_forecasts": 1,
   "reporting_lag_days": 14,
+  "pooled_last_90": {
+    "ign_recall@5%": 0.5,
+    "ign_recall@10%": 0.5
+  },
+  "per_forecast": [
+    {
+      "valid_from": "2026-10-08",
+      "ignition_cells": 2,
+      "large_cells": 0,
+      "ign_hits@5%": 1,
+      "ign_hits@10%": 1
+    }
+  ],
   "drift": {
     "training_weekly_ignition_rate": 0.0034133326755792347,
-    "last_365d_rate": 0.0030538131396500496,
-    "ratio": 0.8946719906613921
+    "last_365d_rate": 0.003043496203367448,
+    "ratio": 0.8916494501524009
   }
 }
