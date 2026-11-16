@@ -1,9 +1,9 @@
 {
-  "scored_forecasts": 16,
+  "scored_forecasts": 17,
   "reporting_lag_days": 14,
   "pooled_last_90": {
-    "ign_recall@5%": 0.4444444444444444,
-    "ign_recall@10%": 0.5370370370370371
+    "ign_recall@5%": 0.45454545454545453,
+    "ign_recall@10%": 0.5454545454545454
   },
   "per_forecast": [
     {
@@ -113,6 +113,13 @@
     },
     {
       "valid_from": "2026-10-25",
+      "ignition_cells": 1,
+      "large_cells": 0,
+      "ign_hits@5%": 1,
+      "ign_hits@10%": 1
+    },
+    {
+      "valid_from": "2026-10-26",
       "ignition_cells": 1,
       "large_cells": 0,
       "ign_hits@5%": 1,

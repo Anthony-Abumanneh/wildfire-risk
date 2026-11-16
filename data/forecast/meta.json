@@ -1,8 +1,8 @@
 {
-  "issued": "2026-11-15T19:33",
-  "valid_from": "2026-11-15",
-  "valid_to": "2026-11-21",
-  "observed_weather_through": "2026-11-13",
+  "issued": "2026-11-16T23:11",
+  "valid_from": "2026-11-16",
+  "valid_to": "2026-11-22",
+  "observed_weather_through": "2026-11-14",
   "model_versions": {
     "ign": "20261008",
     "large": "20261008",
