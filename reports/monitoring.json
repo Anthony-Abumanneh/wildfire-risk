@@ -1,9 +1,9 @@
 {
-  "scored_forecasts": 26,
+  "scored_forecasts": 27,
   "reporting_lag_days": 14,
   "pooled_last_90": {
-    "ign_recall@5%": 0.5,
-    "ign_recall@10%": 0.5967741935483871
+    "ign_recall@5%": 0.515625,
+    "ign_recall@10%": 0.609375
   },
   "per_forecast": [
     {
@@ -187,11 +187,18 @@
       "large_cells": 0,
       "ign_hits@5%": 2,
       "ign_hits@10%": 2
+    },
+    {
+      "valid_from": "2026-11-05",
+      "ignition_cells": 2,
+      "large_cells": 0,
+      "ign_hits@5%": 2,
+      "ign_hits@10%": 2
     }
   ],
   "drift": {
     "training_weekly_ignition_rate": 0.0034133326755792347,
-    "last_365d_rate": 0.0029196929679762298,
-    "ratio": 0.8553789640445066
+    "last_365d_rate": 0.0029300099042588314,
+    "ratio": 0.8584015045534978
   }
 }
